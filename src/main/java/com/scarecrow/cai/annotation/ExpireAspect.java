@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import com.scarecrow.cai.annotation.ExpireAnnotation.ExpireType;
+import com.scarecrow.cai.metadata.DataType;
 import com.scarecrow.cai.redis.RedisClient;
 
 @Aspect
@@ -31,13 +32,14 @@ public class ExpireAspect extends BaseAspect {
 		Object[] args = pointCut.getArgs();
 		Class<?>[] prifexes = method.getAnnotation(ExpireAnnotation.class).prefix();
 		Class<?> clazz = method.getAnnotation(ExpireAnnotation.class).clazz();
-		String domain = method.getDeclaredAnnotation(ExpireAnnotation.class).domain();
-		String[] params = method.getDeclaredAnnotation(ExpireAnnotation.class).params();
+		String domain = method.getAnnotation(ExpireAnnotation.class).domain();
+		DataType dataType = method.getAnnotation(ExpireAnnotation.class).dataType();
+		String[] params = method.getAnnotation(ExpireAnnotation.class).params();
 		ExpireType expireType = method.getAnnotation(ExpireAnnotation.class).expireType();
-		String expireKey = getFuzzyExpireKey(expireType, domain, prifexes, clazz, params, args);
-		if (expireType.equals(ExpireType.SELF)) {
-			redisClient.expire(expireKey, 0);
-		} else {
+		String cacheKey = getCacheKey(domain, dataType, prifexes, clazz, params, args);
+		redisClient.expire(cacheKey, 0);
+		if (!expireType.equals(ExpireType.SELF)) {
+			String expireKey = getFuzzyExpireKey(expireType, domain, prifexes, clazz, params, args);
 			redisClient.fuzzyExpire(expireKey, 0);
 		}
 		return pointCut.proceed();
@@ -45,7 +47,7 @@ public class ExpireAspect extends BaseAspect {
 
 	private String getFuzzyExpireKey(ExpireType expireType, String domain, Class<?>[] prifexes, Class<?> clazz,
 			String[] params, Object[] args) {
-		StringBuffer key = new StringBuffer(domain);
+		StringBuffer key = new StringBuffer(domain).append("-").append(DataType.LIST);
 		if (!expireType.equals(ExpireType.DOMAIN)) {
 			for (Class<?> prifex : prifexes) {
 				if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
@@ -69,6 +71,24 @@ public class ExpireAspect extends BaseAspect {
 			}
 		} else {
 			return key.toString();
+		}
+		return key.toString();
+	}
+
+	private String getCacheKey(String domain, DataType dataType, Class<?>[] prifexes, Class<?> clazz, String[] params,
+			Object[] args) {
+		StringBuffer key = new StringBuffer(domain).append("-").append(dataType);
+		for (Class<?> prifex : prifexes) {
+			if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
+				key.append("-").append(prifex.getCanonicalName());
+			}
+		}
+		key.append("-").append(clazz.getCanonicalName());
+		for (int i = 0, n = params.length; i < n; i++) {
+			Object obj = getParamsValue(params[i], args);
+			if (null != obj) {
+				key.append("-").append(obj);
+			}
 		}
 		return key.toString();
 	}

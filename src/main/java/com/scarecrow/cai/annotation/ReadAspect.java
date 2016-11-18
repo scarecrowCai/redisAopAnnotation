@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.scarecrow.cai.metadata.DataType;
 import com.scarecrow.cai.redis.RedisClient;
 
 @Aspect
@@ -32,9 +33,10 @@ public class ReadAspect extends BaseAspect {
 		Method method = ((MethodSignature) pointCut.getSignature()).getMethod();
 		Class<?>[] prifexes = method.getAnnotation(ReadAnnotation.class).prefix();
 		Class<?> clazz = method.getAnnotation(ReadAnnotation.class).clazz();
-		String domain = method.getDeclaredAnnotation(ReadAnnotation.class).domain();
-		String[] params = method.getDeclaredAnnotation(ReadAnnotation.class).params();
-		String cacheKey = getCacheKey(domain, prifexes, clazz, params, args);
+		String domain = method.getAnnotation(ReadAnnotation.class).domain();
+		DataType dataType = method.getAnnotation(ReadAnnotation.class).dataType();
+		String[] params = method.getAnnotation(ReadAnnotation.class).params();
+		String cacheKey = getCacheKey(domain, dataType, prifexes, clazz, params, args);
 		String result = redisClient.get(cacheKey);
 		if (null != result) {
 			if (!clazz.isPrimitive()) {
@@ -58,8 +60,9 @@ public class ReadAspect extends BaseAspect {
 		return null;
 	}
 
-	private String getCacheKey(String domain, Class<?>[] prifexes, Class<?> clazz, String[] params, Object[] args) {
-		StringBuffer key = new StringBuffer(domain);
+	private String getCacheKey(String domain, DataType dataType, Class<?>[] prifexes, Class<?> clazz, String[] params,
+			Object[] args) {
+		StringBuffer key = new StringBuffer(domain).append("-").append(dataType);
 		for (Class<?> prifex : prifexes) {
 			if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
 				key.append("-").append(prifex.getCanonicalName());

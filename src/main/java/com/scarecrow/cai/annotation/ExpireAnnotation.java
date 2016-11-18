@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.scarecrow.cai.metadata.DataType;
+
 /**
  * Expire Annotation: Completed cache key is domain, prefixes, clazz, parameter
  * value combined with '-'
@@ -19,6 +21,11 @@ public @interface ExpireAnnotation {
 	 * cache key domain
 	 */
 	String domain();
+
+	/**
+	 * cache data type info
+	 */
+	DataType dataType() default DataType.OBJECT;
 
 	/**
 	 * class chain after domain before self
@@ -49,9 +56,9 @@ public @interface ExpireAnnotation {
 	 * Expire Type:
 	 * 
 	 * <pre>
-	 * DOMAIN : expire whole domain data
-	 * PREFIX : expire same prefix class data under domain
-	 * CLAZZ  : expire same prefix class and class data under domain
+	 * DOMAIN : expire whole domain list data
+	 * PREFIX : expire same prefix class list data under domain
+	 * CLAZZ  : expire same prefix class and class list data under domain
 	 * SELF   : only expire self
 	 * </pre>
 	 */

@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.scarecrow.cai.metadata.DataType;
+
 /**
  * Read Annotation: Completed cache key is domain, prefixes, clazz, parameter
  * value combined with '-'
@@ -19,6 +21,11 @@ public @interface ReadAnnotation {
 	 * cache key domain
 	 */
 	String domain();
+
+	/**
+	 * cache data type info
+	 */
+	DataType dataType() default DataType.OBJECT;
 
 	/**
 	 * class chain after domain before self
