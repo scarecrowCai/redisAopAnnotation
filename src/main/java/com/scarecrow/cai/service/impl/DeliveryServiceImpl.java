@@ -22,7 +22,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 	}
 
 	@Override
-	@ReadAnnotation(domain = DOMAIN, prifex = City.class, clazz = Shop.class, params = { "0" })
+	@ReadAnnotation(domain = DOMAIN, prefix = City.class, clazz = Shop.class, params = { "0" })
 	public Shop getShop(long shopId) {
 		return new Shop(shopId, "Nike", new City(1L, "上海"));
 	}
@@ -34,7 +34,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 	}
 
 	@Override
-	@ExpireAnnotation(domain = DOMAIN, prifex = City.class, clazz = Shop.class, params = {
+	@ExpireAnnotation(domain = DOMAIN, prefix = City.class, clazz = Shop.class, params = {
 			"0.id" }, expireType = ExpireType.SELF)
 	public Shop updateShop(Shop shop) {
 		return shop;

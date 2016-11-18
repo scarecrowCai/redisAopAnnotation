@@ -30,7 +30,7 @@ public class ReadAspect extends BaseAspect {
 	public Object getCacheObj(ProceedingJoinPoint pointCut) {
 		Object[] args = pointCut.getArgs();
 		Method method = ((MethodSignature) pointCut.getSignature()).getMethod();
-		Class<?>[] prifexes = method.getAnnotation(ReadAnnotation.class).prifex();
+		Class<?>[] prifexes = method.getAnnotation(ReadAnnotation.class).prefix();
 		Class<?> clazz = method.getAnnotation(ReadAnnotation.class).clazz();
 		String domain = method.getDeclaredAnnotation(ReadAnnotation.class).domain();
 		String[] params = method.getDeclaredAnnotation(ReadAnnotation.class).params();

@@ -29,12 +29,12 @@ public class ExpireAspect extends BaseAspect {
 	public Object getCacheObj(ProceedingJoinPoint pointCut) throws Throwable {
 		Method method = ((MethodSignature) pointCut.getSignature()).getMethod();
 		Object[] args = pointCut.getArgs();
-		Class<?>[] prifexes = method.getAnnotation(ExpireAnnotation.class).prifex();
+		Class<?>[] prifexes = method.getAnnotation(ExpireAnnotation.class).prefix();
 		Class<?> clazz = method.getAnnotation(ExpireAnnotation.class).clazz();
 		String domain = method.getDeclaredAnnotation(ExpireAnnotation.class).domain();
 		String[] params = method.getDeclaredAnnotation(ExpireAnnotation.class).params();
 		ExpireType expireType = method.getAnnotation(ExpireAnnotation.class).expireType();
-		String expireKey = getExpireKey(expireType, domain, prifexes, clazz, params, args);
+		String expireKey = getFuzzyExpireKey(expireType, domain, prifexes, clazz, params, args);
 		if (expireType.equals(ExpireType.SELF)) {
 			redisClient.expire(expireKey, 0);
 		} else {
@@ -43,7 +43,7 @@ public class ExpireAspect extends BaseAspect {
 		return pointCut.proceed();
 	}
 
-	private String getExpireKey(ExpireType expireType, String domain, Class<?>[] prifexes, Class<?> clazz,
+	private String getFuzzyExpireKey(ExpireType expireType, String domain, Class<?>[] prifexes, Class<?> clazz,
 			String[] params, Object[] args) {
 		StringBuffer key = new StringBuffer(domain);
 		if (!expireType.equals(ExpireType.DOMAIN)) {
@@ -55,7 +55,7 @@ public class ExpireAspect extends BaseAspect {
 		} else {
 			return key.toString();
 		}
-		if (!expireType.equals(ExpireType.PRIFEX)) {
+		if (!expireType.equals(ExpireType.PREFIX)) {
 			key.append("-").append(clazz.getCanonicalName());
 		} else {
 			return key.toString();

@@ -5,16 +5,38 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Read Annotation: Completed cache key is domain, prefixes, clazz, parameter
+ * value combined with '-'
+ * 
+ * @author cailx
+ * 
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ReadAnnotation {
+	/**
+	 * cache key domain
+	 */
 	String domain();
 
-	Class<?>[] prifex() default Object.class;
+	/**
+	 * class chain after domain before self
+	 */
+	Class<?>[] prefix() default Object.class;
 
+	/**
+	 * return class
+	 */
 	Class<?> clazz();
 
+	/**
+	 * cache expire seconds
+	 */
 	long expire() default 30 * 60 * 1000;
 
-	String[] params(); // index | index.key
+	/**
+	 * part of cache key : parameter index | index.key.key...
+	 */
+	String[] params();
 }
