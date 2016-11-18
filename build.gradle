@@ -33,5 +33,6 @@ dependencies {
 		'ch.qos.logback:logback-classic:1.1.7',
 		'ch.qos.logback:logback-core:1.1.7',
 		'org.projectlombok:lombok:1.16.10',
+		'com.alibaba:fastjson:1.2.7',
 		'redis.clients:jedis:2.9.0'
 }

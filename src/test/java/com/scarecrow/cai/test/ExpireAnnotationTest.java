@@ -22,9 +22,9 @@ public class ExpireAnnotationTest extends SpringTestCase {
 		deliveryService.getCity(1L);
 		deliveryService.getShop(1L);
 		Shop shop = new Shop(1L, "APPLE", new City(1L, "上海"));
-		deliveryService.updateShop(shop);
-		deliveryService.getCity(1L);
-		deliveryService.getShop(1L);
+		System.out.println(deliveryService.updateShop(shop));
+		System.out.println(deliveryService.getCity(1L));
+		System.out.println(deliveryService.getShop(1L));
 	}
 
 }

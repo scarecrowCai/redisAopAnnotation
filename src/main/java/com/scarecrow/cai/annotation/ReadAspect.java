@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.scarecrow.cai.redis.RedisClient;
 
 @Aspect
@@ -32,6 +34,31 @@ public class ReadAspect extends BaseAspect {
 		Class<?> clazz = method.getAnnotation(ReadAnnotation.class).clazz();
 		String domain = method.getDeclaredAnnotation(ReadAnnotation.class).domain();
 		String[] params = method.getDeclaredAnnotation(ReadAnnotation.class).params();
+		String cacheKey = getCacheKey(domain, prifexes, clazz, params, args);
+		String result = redisClient.get(cacheKey);
+		if (null != result) {
+			if (!clazz.isPrimitive()) {
+				Object obj = JSON.parse(result);
+				if (obj.getClass() == JSONArray.class) {
+					return JSON.parseArray(result, clazz);
+				}
+				return JSON.toJavaObject(JSON.parseObject(result), clazz);
+			}
+			return result;
+		}
+		try {
+			Object returnValue = pointCut.proceed();
+			if (null != returnValue) {
+				redisClient.set(cacheKey, JSON.toJSONString(returnValue));
+			}
+			return returnValue;
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private String getCacheKey(String domain, Class<?>[] prifexes, Class<?> clazz, String[] params, Object[] args) {
 		StringBuffer key = new StringBuffer(domain);
 		for (Class<?> prifex : prifexes) {
 			if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
@@ -45,19 +72,7 @@ public class ReadAspect extends BaseAspect {
 				key.append("-").append(obj);
 			}
 		}
-		Object result = redisClient.get(key.toString());
-		if (null != result) {
-			return result;
-		}
-		try {
-			result = pointCut.proceed();
-			if (null != result) {
-				redisClient.set(key.toString(), result);
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		return result;
+		return key.toString();
 	}
 
 }

@@ -3,10 +3,6 @@ package com.scarecrow.cai.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author admin
- *
- */
 @Data
 @NoArgsConstructor
 public class Order {

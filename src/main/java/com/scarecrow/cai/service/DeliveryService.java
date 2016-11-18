@@ -8,9 +8,9 @@ public interface DeliveryService {
 	public City getCity(long cityId);
 
 	public Shop getShop(long shopId);
-	
+
 	public City updateCity(City city);
-	
+
 	public Shop updateShop(Shop shop);
 
 }

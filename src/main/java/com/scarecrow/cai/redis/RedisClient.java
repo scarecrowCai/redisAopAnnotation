@@ -3,6 +3,7 @@ package com.scarecrow.cai.redis;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class RedisClient implements RedisCache {
 	private Logger logger = LoggerFactory.getLogger(RedisClient.class);
 	private Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
 	private JedisCluster jedisCluster;
-	private Map<String, Object> cacahe = new HashMap<String, Object>();
+	private Map<String, String> cacahe = new HashMap<String, String>();
 
 	// @PostConstruct
 	// private void init() {
@@ -29,20 +30,20 @@ public class RedisClient implements RedisCache {
 	// }
 
 	@Override
-	public void set(String key, Object value, int seconds) {
-		// TODO use jedisCluster
+	public void set(String key, String value, int seconds) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void set(String key, Object value) {
-		// TODO use jedisCluster
+	public void set(String key, String value) {
+		// TODO Auto-generated method stub
 		logger.info("set to cache, key = {}, value - {}", key, value);
 		cacahe.put(key, value);
 	}
 
 	@Override
 	public void expire(String key, int seconds) {
-		// TODO use jedisCluster
+		// TODO Auto-generated method stub
 		Object _value = cacahe.get(key);
 		if (null != _value) {
 			logger.info("remove from cache, key = {}, Object = {}", key, _value);
@@ -52,14 +53,14 @@ public class RedisClient implements RedisCache {
 
 	@Override
 	public void fuzzyExpire(String key, int seconds) {
-		// TODO use jedisCluster
+		// TODO Auto-generated method stub
 		// Set<String> keys = jedisCluster.hkeys(key);
 		// for (String _key : keys) {
 		// expire(_key, seconds);
 		// }
-		Iterator<Entry<String, Object>> it = cacahe.entrySet().iterator();
+		Iterator<Entry<String, String>> it = cacahe.entrySet().iterator();
 		while (it.hasNext()) {
-			Entry<String, Object> entry = it.next();
+			Entry<String, String> entry = it.next();
 			String _key = entry.getKey();
 			Object _value = entry.getValue();
 			if (_key.startsWith(key)) {
@@ -71,9 +72,9 @@ public class RedisClient implements RedisCache {
 	}
 
 	@Override
-	public Object get(String key) {
-		// TODO use jedisCluster
-		Object result = cacahe.get(key);
+	public String get(String key) {
+		// TODO Auto-generated method stub
+		String result = cacahe.get(key);
 		if (null != result) {
 			logger.info("get from cache, key = {}, Object = {}", key, result);
 		}
@@ -81,8 +82,39 @@ public class RedisClient implements RedisCache {
 	}
 
 	@Override
+	public boolean exist(String key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void lpush(String key, String... values) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<String> lrange(String key, int start, int end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean lexist(String key, String value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void incr(String key) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void flush() {
-		// TODO use jedisCluster
+		// TODO Auto-generated method stub
+
 	}
 
 }
