@@ -31,8 +31,8 @@ public class ExpireAspect extends BaseAspect {
 		Object[] args = pointCut.getArgs();
 		Class<?>[] prifexes = method.getAnnotation(ExpireAnnotation.class).prifex();
 		Class<?> clazz = method.getAnnotation(ExpireAnnotation.class).clazz();
-		String domain = method.getDeclaredAnnotation(ReadAnnotation.class).domain();
-		String[] params = method.getDeclaredAnnotation(ReadAnnotation.class).params();
+		String domain = method.getDeclaredAnnotation(ExpireAnnotation.class).domain();
+		String[] params = method.getDeclaredAnnotation(ExpireAnnotation.class).params();
 		ExpireType expireType = method.getAnnotation(ExpireAnnotation.class).expireType();
 		String expireKey = getExpireKey(expireType, domain, prifexes, clazz, params, args);
 		if (expireType.equals(ExpireType.SELF)) {
@@ -48,7 +48,7 @@ public class ExpireAspect extends BaseAspect {
 		StringBuffer key = new StringBuffer(domain);
 		if (!expireType.equals(ExpireType.DOMAIN)) {
 			for (Class<?> prifex : prifexes) {
-				if (!prifex.getClass().isInstance(Object.class)) {
+				if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
 					key.append("-").append(prifex.getCanonicalName());
 				}
 			}

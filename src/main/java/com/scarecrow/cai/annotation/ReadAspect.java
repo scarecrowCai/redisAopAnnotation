@@ -34,7 +34,7 @@ public class ReadAspect extends BaseAspect {
 		String[] params = method.getDeclaredAnnotation(ReadAnnotation.class).params();
 		StringBuffer key = new StringBuffer(domain);
 		for (Class<?> prifex : prifexes) {
-			if (!prifex.getClass().isInstance(Object.class)) {
+			if (!prifex.getCanonicalName().equals(Object.class.getCanonicalName())) {
 				key.append("-").append(prifex.getCanonicalName());
 			}
 		}
