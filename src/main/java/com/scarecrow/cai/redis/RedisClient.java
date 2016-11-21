@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,12 +24,12 @@ public class RedisClient implements RedisCache {
 	private JedisCluster jedisCluster;
 	private Map<String, String> cacahe = new HashMap<String, String>();
 
-	// @PostConstruct
-	// private void init() {
-	// // Jedis Cluster will attempt to discover cluster nodes automatically
-	// jedisClusterNodes.add(new HostAndPort("127.0.0.1", 6379));
-	// jedisCluster = new JedisCluster(jedisClusterNodes);
-	// }
+	@PostConstruct
+	private void init() {
+		// Jedis Cluster will attempt to discover cluster nodes automatically
+		jedisClusterNodes.add(new HostAndPort("127.0.0.1", 6379));
+		jedisCluster = new JedisCluster(jedisClusterNodes);
+	}
 
 	@Override
 	public void set(String key, String value, int seconds) {
@@ -37,6 +39,7 @@ public class RedisClient implements RedisCache {
 	@Override
 	public void set(String key, String value) {
 		// TODO Auto-generated method stub
+		// jedisCluster.set(key, value);
 		logger.info("set to cache, key = {}, value - {}", key, value);
 		cacahe.put(key, value);
 	}

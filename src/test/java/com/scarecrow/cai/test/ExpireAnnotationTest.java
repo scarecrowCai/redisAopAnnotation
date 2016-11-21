@@ -2,6 +2,7 @@ package com.scarecrow.cai.test;
 
 import javax.annotation.Resource;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.scarecrow.cai.model.City;
@@ -13,18 +14,21 @@ public class ExpireAnnotationTest extends SpringTestCase {
 	@Resource
 	private DeliveryService deliveryService;
 
+	@Ignore
 	@Test
-	public void testExpireAnnotation() {
+	public void testExpireClazz() {
 		deliveryService.getCity(1L);
-		deliveryService.getShop(1L);
+		deliveryService.getCities();
 		City city = new City(1L, "北京");
 		deliveryService.updateCity(city);
-		deliveryService.getCity(1L);
+	}
+
+	@Test
+	public void testExpirePrefix() {
+		deliveryService.getCities();
+		deliveryService.getCityShops(new City(1L, "上海"));
 		deliveryService.getShop(1L);
-		Shop shop = new Shop(1L, "APPLE", new City(1L, "上海"));
-		System.out.println(deliveryService.updateShop(shop));
-		System.out.println(deliveryService.getCity(1L));
-		System.out.println(deliveryService.getShop(1L));
+		deliveryService.updateShop(new Shop(1L, "Adidas", new City(1L, "上海")));
 	}
 
 }

@@ -45,5 +45,5 @@ public @interface ReadAnnotation {
 	/**
 	 * part of cache key : parameter index | index.key.key...
 	 */
-	String[] params();
+	String[] params() default {};
 }
